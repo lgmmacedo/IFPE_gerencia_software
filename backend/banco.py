@@ -29,7 +29,7 @@ def consultar_saldo():
 
 def credito():
     numero = input("Digite o número da conta: ")
-    valor = float(input("Digite o valor: "))
+    valor = float(input("Digite o valor: ").replace(",", "."))
 
     for conta in contas:
         if conta["numero"] == numero:
@@ -42,7 +42,7 @@ def credito():
 
 def debito():
     numero = input("Digite o número da conta: ")
-    valor = float(input("Digite o valor: "))
+    valor = float(input("Digite o valor: ").replace(",", "."))
 
     for conta in contas:
         if conta["numero"] == numero:
@@ -56,8 +56,7 @@ def debito():
 def transferencia():
     origem = input("Conta de origem: ")
     destino = input("Conta de destino: ")
-    valor = float(input("Valor da transferência: "))
-
+    valor = float(input("Digite o valor: ").replace(",", "."))
     conta_origem = None
     conta_destino = None
 
