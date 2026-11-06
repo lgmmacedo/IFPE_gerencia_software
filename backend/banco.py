@@ -27,9 +27,14 @@ def consultar_saldo():
     print("Conta não encontrada!")
 
 
+
 def credito():
     numero = input("Digite o número da conta: ")
     valor = float(input("Digite o valor: ").replace(",", "."))
+
+    if valor < 0:
+        print("Erro: o valor não pode ser negativo!")
+        return
 
     for conta in contas:
         if conta["numero"] == numero:
@@ -41,9 +46,14 @@ def credito():
 
 
 
+
 def debito():
     numero = input("Digite o número da conta: ")
     valor = float(input("Digite o valor: ").replace(",", "."))
+
+    if valor < 0:
+        print("Erro: o valor não pode ser negativo!")
+        return
 
     for conta in contas:
         if conta["numero"] == numero:
@@ -56,10 +66,16 @@ def debito():
             return
 
     print("Conta não encontrada!")
+
+
 def transferencia():
     origem = input("Conta de origem: ")
     destino = input("Conta de destino: ")
     valor = float(input("Valor da transferência: ").replace(",", "."))
+
+    if valor < 0:
+        print("Erro: o valor não pode ser negativo!")
+        return
 
     conta_origem = None
     conta_destino = None
