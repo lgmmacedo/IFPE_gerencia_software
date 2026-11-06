@@ -4,16 +4,42 @@
 contas = []
 
 
+
 def cadastrar_conta():
     numero = input("Digite o número da conta: ")
 
-    conta = {
-        "numero": numero,
-        "saldo": 0.0
-    }
+    for conta in contas:
+        if conta["numero"] == numero:
+            print("Essa conta já existe!")
+            return
+
+    print("1 - Conta Simples")
+    print("2 - Conta Bônus")
+
+    tipo = input("Escolha o tipo de conta: ")
+
+    if tipo == "1":
+        conta = {
+            "numero": numero,
+            "saldo": 0.0,
+            "tipo": "simples"
+        }
+
+    elif tipo == "2":
+        conta = {
+            "numero": numero,
+            "saldo": 0.0,
+            "tipo": "bonus",
+            "pontos": 10
+        }
+
+    else:
+        print("Tipo de conta inválido!")
+        return
 
     contas.append(conta)
     print("Conta cadastrada com sucesso!")
+
 
 
 def consultar_saldo():
@@ -27,17 +53,30 @@ def consultar_saldo():
     print("Conta não encontrada!")
 
 
+
 def credito():
     numero = input("Digite o número da conta: ")
     valor = float(input("Digite o valor: ").replace(",", "."))
 
+    if valor < 0:
+        print("Erro: o valor não pode ser negativo!")
+        return
+
     for conta in contas:
         if conta["numero"] == numero:
             conta["saldo"] += valor
+
+            if conta["tipo"] == "bonus":
+                pontos_ganhos = int(valor // 100)
+                conta["pontos"] += pontos_ganhos
+                print("Pontos ganhos:", pontos_ganhos)
+                print("Total de pontos:", conta["pontos"])
+
             print("Crédito realizado!")
             return
 
     print("Conta não encontrada!")
+
 
 
 def debito():
