@@ -4,7 +4,8 @@ from backend.banco import (
     consultar_saldo,
     credito,
     debito,
-    transferencia
+    transferencia,
+    render_juros
 )
 
 while True:
@@ -14,7 +15,8 @@ while True:
     print("3 - Crédito")
     print("4 - Débito")
     print("5 - Transferência")
-    print("6 - Sair")
+    print("6 - Render Juros")
+    print("7 - Sair")
 
     opcao = input("Escolha uma opção: ")
 
@@ -29,6 +31,8 @@ while True:
     elif opcao == "5":
         transferencia()
     elif opcao == "6":
+        render_juros()
+    elif opcao == "7":
         print("Sistema encerrado!")
         break
     else:
