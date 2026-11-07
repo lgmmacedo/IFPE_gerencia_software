@@ -95,3 +95,28 @@ def transferencia():
         print("Transferência realizada!")
     else:
         print("Conta não encontrada!")
+
+def render_juros():
+    numero = input("Digite o número da conta: ")
+
+    for conta in contas:
+        if conta["numero"] == numero:
+            if conta["tipo"] != "poupanca":
+                print("Essa conta não é poupança!")
+                return
+
+            taxa = float(input("Digite a taxa de juros (%): ").replace(",", "."))
+
+            if taxa < 0:
+                print("A taxa não pode ser negativa!")
+                return
+
+            juros = conta["saldo"] * taxa / 100
+            conta["saldo"] += juros
+
+            print("Juros aplicados com sucesso!")
+            print("Novo saldo: R$", round(conta["saldo"], 2))
+            return
+
+    print("Conta não encontrada!")
+
