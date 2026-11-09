@@ -4,16 +4,38 @@
 contas = []
 
 
+
 def cadastrar_conta():
     numero = input("Digite o número da conta: ")
 
+    for conta in contas:
+        if conta["numero"] == numero:
+            print("Essa conta já existe!")
+            return
+
+    print("Escolha o tipo de conta:")
+    print("1 - Conta Simples")
+    print("2 - Conta Poupança")
+
+    tipo = input("Digite a opção: ")
+
+    if tipo == "1":
+        tipo_conta = "simples"
+    elif tipo == "2":
+        tipo_conta = "poupanca"
+    else:
+        print("Opção inválida!")
+        return
+
     conta = {
         "numero": numero,
-        "saldo": 0.0
+        "saldo": 0.0,
+        "tipo": tipo_conta
     }
 
     contas.append(conta)
     print("Conta cadastrada com sucesso!")
+
 
 
 def consultar_saldo():
@@ -73,3 +95,28 @@ def transferencia():
         print("Transferência realizada!")
     else:
         print("Conta não encontrada!")
+
+def render_juros():
+    numero = input("Digite o número da conta: ")
+
+    for conta in contas:
+        if conta["numero"] == numero:
+            if conta["tipo"] != "poupanca":
+                print("Essa conta não é poupança!")
+                return
+
+            taxa = float(input("Digite a taxa de juros (%): ").replace(",", "."))
+
+            if taxa < 0:
+                print("A taxa não pode ser negativa!")
+                return
+
+            juros = conta["saldo"] * taxa / 100
+            conta["saldo"] += juros
+
+            print("Juros aplicados com sucesso!")
+            print("Novo saldo: R$", round(conta["saldo"], 2))
+            return
+
+    print("Conta não encontrada!")
+
