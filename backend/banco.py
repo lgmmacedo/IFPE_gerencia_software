@@ -92,10 +92,20 @@ def debito():
     print("Conta não encontrada!")
 
 
+
 def transferencia():
     origem = input("Conta de origem: ")
     destino = input("Conta de destino: ")
     valor = float(input("Digite o valor: ").replace(",", "."))
+
+    if valor <= 0:
+        print("O valor deve ser maior que zero!")
+        return
+
+    if origem == destino:
+        print("As contas devem ser diferentes!")
+        return
+
     conta_origem = None
     conta_destino = None
 
@@ -106,9 +116,21 @@ def transferencia():
         if conta["numero"] == destino:
             conta_destino = conta
 
-    if conta_origem and conta_destino:
-        conta_origem["saldo"] -= valor
-        conta_destino["saldo"] += valor
-        print("Transferência realizada!")
-    else:
+    if conta_origem is None or conta_destino is None:
         print("Conta não encontrada!")
+        return
+
+    if conta_origem["saldo"] < valor:
+        print("Saldo insuficiente!")
+        return
+
+    conta_origem["saldo"] -= valor
+    conta_destino["saldo"] += valor
+
+    if conta_destino.get("tipo") == "bonus":
+        pontos_ganhos = int(valor // 200)
+        conta_destino["pontos"] += pontos_ganhos
+        print("Pontos ganhos:", pontos_ganhos)
+        print("Total de pontos:", conta_destino["pontos"])
+
+    print("Transferência realizada!")
