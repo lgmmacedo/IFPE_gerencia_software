@@ -24,7 +24,7 @@ def cadastrar_conta():
     if tipo == "1":
         conta = {
             "numero": numero,
-            "saldo": 0.0,
+            "saldo": float(input("Digite o saldo inicial: ").replace(",", ".")),
             "tipo": "simples"
         }
 
@@ -94,8 +94,16 @@ def debito():
     numero = input("Digite o número da conta: ")
     valor = float(input("Digite o valor: ").replace(",", "."))
 
+    if valor < 0:
+        print("Erro: o valor não pode ser negativo!")
+        return
+
     for conta in contas:
         if conta["numero"] == numero:
+            if valor > conta["saldo"]:
+                print("Saldo insuficiente!")
+                return
+
             conta["saldo"] -= valor
             print("Débito realizado!")
             return
@@ -123,10 +131,8 @@ def transferencia():
     for conta in contas:
         if conta["numero"] == origem:
             conta_origem = conta
-
         if conta["numero"] == destino:
             conta_destino = conta
-
 
     if conta_origem is None or conta_destino is None:
         print("Conta não encontrada!")
