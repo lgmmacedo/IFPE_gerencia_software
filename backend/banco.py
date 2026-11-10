@@ -7,13 +7,27 @@ contas = []
 def cadastrar_conta():
     numero = input("Digite o número da conta: ")
 
+    for conta in contas:
+        if conta["numero"] == numero:
+            print("Essa conta já existe!")
+            return
+
+    try:
+        saldo_inicial = float(
+            input("Digite o saldo inicial: ").replace(",", ".")
+        )
+    except ValueError:
+        print("Saldo inválido!")
+        return
+
     conta = {
         "numero": numero,
-        "saldo": 0.0
+        "saldo": saldo_inicial
     }
 
     contas.append(conta)
     print("Conta cadastrada com sucesso!")
+
 
 
 def consultar_saldo():
