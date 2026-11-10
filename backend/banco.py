@@ -140,7 +140,7 @@ def transferencia():
     conta_destino["saldo"] += valor
 
     if conta_destino.get("tipo") == "bonus":
-        pontos_ganhos = int(valor // 200)
+        pontos_ganhos = int(valor // 150)
         conta_destino["pontos"] += pontos_ganhos
         print("Pontos ganhos:", pontos_ganhos)
         print("Total de pontos:", conta_destino["pontos"])
