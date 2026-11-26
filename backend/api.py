@@ -1,5 +1,6 @@
 
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, request
+
 from backend import banco
 
 app = Flask(__name__)
@@ -57,10 +58,7 @@ def transferencia():
 @app.route("/banco/conta/rendimento", methods=["PUT"])
 def rendimento():
     dados = request.get_json()
-    return jsonify(banco.render_juros(
-        dados["numero"],
-        dados["taxa"]
-    ))
+    return jsonify(banco.render_juros(dados["taxa"]))
 
 
 if __name__ == "__main__":

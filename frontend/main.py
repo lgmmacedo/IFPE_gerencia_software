@@ -81,11 +81,9 @@ while True:
         })
 
     elif opcao == "6":
-        numero = input("Numero da poupanca: ")
         taxa = input("Taxa de juros: ").replace(",", ".")
 
         enviar("PUT", "rendimento", {
-            "numero": numero,
             "taxa": taxa
         })
 

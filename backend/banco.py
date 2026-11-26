@@ -101,16 +101,17 @@ def transferencia(origem, destino, valor):
     }
 
 
-def render_juros(numero, taxa):
-    conta = consultar_conta(numero)
+def render_juros(taxa):
     taxa = float(taxa)
-
-    if conta["tipo"] != "poupanca":
-        raise ValueError("Essa conta nao e poupanca!")
 
     if taxa < 0:
         raise ValueError("Taxa invalida!")
 
-    conta["saldo"] += conta["saldo"] * taxa / 100
+    poupancas = []
 
-    return conta
+    for conta in contas:
+        if conta["tipo"] == "poupanca":
+            conta["saldo"] += conta["saldo"] * taxa / 100
+            poupancas.append(conta)
+
+    return poupancas
