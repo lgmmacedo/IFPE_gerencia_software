@@ -1,5 +1,18 @@
+import math
 
 contas = []
+
+
+def validar_valor(valor):
+    try:
+        valor = float(valor)
+    except (ValueError, TypeError):
+        raise ValueError("Valor invalido!") from None
+
+    if not math.isfinite(valor):
+        raise ValueError("Valor invalido!")
+
+    return valor
 
 
 def consultar_conta(numero):
@@ -22,7 +35,7 @@ def cadastrar_conta(numero, tipo, saldo_inicial=None):
     if tipo in ("simples", "poupanca") and saldo_inicial is None:
         raise ValueError("Informe o saldo inicial!")
 
-    saldo = float(saldo_inicial or 0)
+    saldo = validar_valor(saldo_inicial or 0)
 
     if saldo < 0:
         raise ValueError("Saldo inicial invalido!")
@@ -46,7 +59,7 @@ def consultar_saldo(numero):
 
 
 def credito(numero, valor):
-    valor = float(valor)
+    valor = validar_valor(valor)
 
     if valor <= 0:
         raise ValueError("Valor deve ser maior que zero!")
@@ -61,7 +74,7 @@ def credito(numero, valor):
 
 
 def debito(numero, valor):
-    valor = float(valor)
+    valor = validar_valor(valor)
 
     if valor <= 0:
         raise ValueError("Valor deve ser maior que zero!")
@@ -78,7 +91,7 @@ def debito(numero, valor):
 
 
 def transferencia(origem, destino, valor):
-    valor = float(valor)
+    valor = validar_valor(valor)
 
     if valor <= 0:
         raise ValueError("Valor deve ser maior que zero!")
@@ -102,7 +115,7 @@ def transferencia(origem, destino, valor):
 
 
 def render_juros(taxa):
-    taxa = float(taxa)
+    taxa = validar_valor(taxa)
 
     if taxa < 0:
         raise ValueError("Taxa invalida!")
