@@ -2,220 +2,115 @@
 contas = []
 
 
-def cadastrar_conta():
-    numero = input("Digite o número da conta: ")
-
+def consultar_conta(numero):
     for conta in contas:
-        if conta["numero"] == numero:
-            print("Essa conta já existe!")
-            return
+        if conta["numero"] == str(numero):
+            return conta
 
-    print("Escolha o tipo de conta:")
-    print("1 - Conta Simples")
-    print("2 - Conta Bônus")
-    print("3 - Conta Poupança")
+    raise ValueError("Conta nao encontrada!")
 
-    tipo = input("Digite a opção: ")
 
-    if tipo == "1":
-        conta = {
-            "numero": numero,
-            "saldo": 0.0,
-            "tipo": "simples"
-        }
+def cadastrar_conta(numero, tipo, saldo_inicial=None):
+    numero = str(numero)
 
-    elif tipo == "2":
-        conta = {
-            "numero": numero,
-            "saldo": 0.0,
-            "tipo": "bonus",
-            "pontos": 10
-        }
+    if any(c["numero"] == numero for c in contas):
+        raise ValueError("Essa conta ja existe!")
 
-    elif tipo == "3":
-        try:
-            saldo_inicial = float(
-                input("Digite o saldo inicial: ").replace(",", ".")
-            )
-        except ValueError:
-            print("Valor inválido!")
-            return
+    if tipo not in ("simples", "bonus", "poupanca"):
+        raise ValueError("Tipo de conta invalido!")
 
-        if saldo_inicial < 0:
-            print("O saldo inicial não pode ser negativo!")
-            return
+    if tipo in ("simples", "poupanca") and saldo_inicial is None:
+        raise ValueError("Informe o saldo inicial!")
 
-        conta = {
-            "numero": numero,
-            "saldo": saldo_inicial,
-            "tipo": "poupanca"
-        }
+    saldo = float(saldo_inicial or 0)
 
-    else:
-        print("Tipo de conta inválido!")
-        return
+    if saldo < 0:
+        raise ValueError("Saldo inicial invalido!")
+
+    conta = {
+        "numero": numero,
+        "tipo": tipo,
+        "saldo": saldo
+    }
+
+    if tipo == "bonus":
+        conta["pontos"] = 10
 
     contas.append(conta)
-    print("Conta cadastrada com sucesso!")
+    return conta
 
 
-def consultar_saldo():
-    numero = input("Digite o número da conta: ")
-
-    for conta in contas:
-        if conta["numero"] == numero:
-            print("Saldo: R$", round(conta["saldo"], 2))
-
-            if conta["tipo"] == "bonus":
-                print("Pontos:", conta["pontos"])
-
-            return
-
-    print("Conta não encontrada!")
+def consultar_saldo(numero):
+    conta = consultar_conta(numero)
+    return conta["saldo"]
 
 
-def credito():
-    numero = input("Digite o número da conta: ")
-
-    try:
-        valor = float(input("Digite o valor: ").replace(",", "."))
-    except ValueError:
-        print("Valor inválido!")
-        return
+def credito(numero, valor):
+    valor = float(valor)
 
     if valor <= 0:
-        print("O valor deve ser maior que zero!")
-        return
+        raise ValueError("Valor deve ser maior que zero!")
 
-    for conta in contas:
-        if conta["numero"] == numero:
-            conta["saldo"] += valor
+    conta = consultar_conta(numero)
+    conta["saldo"] += valor
 
-            if conta["tipo"] == "bonus":
-                pontos_ganhos = int(valor // 100)
-                conta["pontos"] += pontos_ganhos
-                print("Pontos ganhos:", pontos_ganhos)
-                print("Total de pontos:", conta["pontos"])
+    if conta["tipo"] == "bonus":
+        conta["pontos"] += int(valor // 100)
 
-            print("Crédito realizado!")
-            return
-
-    print("Conta não encontrada!")
+    return conta
 
 
-def debito():
-    numero = input("Digite o número da conta: ")
-
-    try:
-        valor = float(input("Digite o valor: ").replace(",", "."))
-    except ValueError:
-        print("Valor inválido!")
-        return
+def debito(numero, valor):
+    valor = float(valor)
 
     if valor <= 0:
-        print("O valor deve ser maior que zero!")
-        return
+        raise ValueError("Valor deve ser maior que zero!")
 
-    for conta in contas:
-        if conta["numero"] == numero:
+    conta = consultar_conta(numero)
 
-            if conta["tipo"] in ("simples", "bonus"):
-                limite = -1000
-            else:
-                limite = 0
+    limite = -1000 if conta["tipo"] in ("simples", "bonus") else 0
 
-            if conta["saldo"] - valor < limite:
-                print("Operação negada! Limite de saldo excedido.")
-                return
+    if conta["saldo"] - valor < limite:
+        raise ValueError("Limite de saldo excedido!")
 
-            conta["saldo"] -= valor
-            print("Débito realizado!")
-            return
-
-    print("Conta não encontrada!")
+    conta["saldo"] -= valor
+    return conta
 
 
-def transferencia():
-    origem = input("Conta de origem: ")
-    destino = input("Conta de destino: ")
-
-    try:
-        valor = float(input("Digite o valor: ").replace(",", "."))
-    except ValueError:
-        print("Valor inválido!")
-        return
+def transferencia(origem, destino, valor):
+    valor = float(valor)
 
     if valor <= 0:
-        print("O valor deve ser maior que zero!")
-        return
+        raise ValueError("Valor deve ser maior que zero!")
 
-    if origem == destino:
-        print("As contas devem ser diferentes!")
-        return
+    if str(origem) == str(destino):
+        raise ValueError("As contas devem ser diferentes!")
 
-    conta_origem = None
-    conta_destino = None
+    conta_origem = consultar_conta(origem)
+    conta_destino = consultar_conta(destino)
 
-    for conta in contas:
-        if conta["numero"] == origem:
-            conta_origem = conta
-
-        if conta["numero"] == destino:
-            conta_destino = conta
-
-    if conta_origem is None or conta_destino is None:
-        print("Conta não encontrada!")
-        return
-
-    if conta_origem["tipo"] in ("simples", "bonus"):
-        limite = -1000
-    else:
-        limite = 0
-
-    if conta_origem["saldo"] - valor < limite:
-        print("Operação negada! Limite de saldo excedido.")
-        return
-
-    conta_origem["saldo"] -= valor
+    debito(origem, valor)
     conta_destino["saldo"] += valor
 
     if conta_destino["tipo"] == "bonus":
-        pontos_ganhos = int(valor // 200)
-        conta_destino["pontos"] += pontos_ganhos
+        conta_destino["pontos"] += int(valor // 150)
 
-        print("Pontos ganhos:", pontos_ganhos)
-        print("Total de pontos:", conta_destino["pontos"])
+    return {
+        "origem": conta_origem,
+        "destino": conta_destino
+    }
 
-    print("Transferência realizada!")
 
+def render_juros(numero, taxa):
+    conta = consultar_conta(numero)
+    taxa = float(taxa)
 
-def render_juros():
-    numero = input("Digite o número da conta: ")
+    if conta["tipo"] != "poupanca":
+        raise ValueError("Essa conta nao e poupanca!")
 
-    for conta in contas:
-        if conta["numero"] == numero:
+    if taxa < 0:
+        raise ValueError("Taxa invalida!")
 
-            if conta["tipo"] != "poupanca":
-                print("Essa conta não é poupança!")
-                return
+    conta["saldo"] += conta["saldo"] * taxa / 100
 
-            try:
-                taxa = float(
-                    input("Digite a taxa de juros (%): ").replace(",", ".")
-                )
-            except ValueError:
-                print("Taxa inválida!")
-                return
-
-            if taxa < 0:
-                print("A taxa não pode ser negativa!")
-                return
-
-            juros = conta["saldo"] * taxa / 100
-            conta["saldo"] += juros
-
-            print("Juros aplicados com sucesso!")
-            print("Novo saldo: R$", round(conta["saldo"], 2))
-            return
-
-    print("Conta não encontrada!")
+    return conta
