@@ -149,3 +149,29 @@ def test_rendimento_poupancas():
     assert banco.consultar_saldo("111") == 1100
     assert banco.consultar_saldo("222") == 2200
     assert banco.consultar_saldo("333") == 500
+
+
+@pytest.mark.parametrize("valor", ["abc", "nan", "inf", "-inf"])
+def test_valor_invalido(valor):
+    banco.cadastrar_conta("123", "simples", 500)
+
+    with pytest.raises(ValueError):
+        banco.credito("123", valor)
+
+    assert banco.consultar_saldo("123") == 500
+
+
+def test_conta_duplicada():
+    banco.cadastrar_conta("123", "simples", 500)
+
+    with pytest.raises(ValueError):
+        banco.cadastrar_conta("123", "simples", 500)
+
+
+def test_taxa_negativa():
+    banco.cadastrar_conta("123", "poupanca", 1000)
+
+    with pytest.raises(ValueError):
+        banco.render_juros(-10)
+
+    assert banco.consultar_saldo("123") == 1000
